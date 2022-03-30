@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{head|safe}}
+    <title>Add Pengembalian</title>
+</head>
+
+<body>
+    {{menu|safe}}
+    <div class="menu">
+        <div class="container">
+            <h1 class="center">Add New</h1>
+            <div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <ul class="flashes p-0">
+                    {% for category, message in messages %}
+                    <div class="alert alert-danger text-center fw-bolder" role="alert">
+                        <li class="{{ category }}">{{ message }}</li>
+                    </div>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+            </div>
+            <div>
+                <div class="card-add">
+                    <div class="card ml-auto mr-auto">
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-10">
+                                <form class="m-2" action="/addpengembalian" method="POST">
+                                    <div class="mb-3">
+                                        <label for="kode_kembali" class="form-label">Kode Kembali</label>
+                                        <input type="text" name="kode_kembali" class="form-control" id="kode_kembali"
+                                            placeholder="Kode Kembali" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="kode_buku" class="form-label">Kode Buku</label>
+                                        <select name="kode_buku" id="kode_buku" placeholder="Kode Buku" class="form-control" required>
+                                            {% for row in container %}
+                                            <option value="{{row.kode_buku}}">{{row.kode_buku}} - {{row.judul}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="nim" class="form-label">NIM</label>
+                                        <select name="nim" id="nim" placeholder="NIM" class="form-control" required>
+                                            {% for row in container1 %}
+                                            <option value="{{row.nim}}">{{row.nim}} - {{row.nama_mahasiswa}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="tgl_kembali" class="form-label">Tanggal Kembali</label>
+                                        <input type="date" name="tgl_kembali" class="form-control" id="tgl_kembali"
+                                            placeholder="Tanggal Kembali" required>
+                                    </div><br><br>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <a href="/pengembalian" class="btn btn-danger">Cancel</a>
+                                </form>
+                            </div>
+                            <div class="col-1"></div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            </div>
+        </div>
+    </div>
+    {{footer|safe}}
+</body>
+
+</html>

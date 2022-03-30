@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{head|safe}}
+    <title>Add Anggota</title>
+</head>
+
+<body>
+    {{menu|safe}}
+    <div class="menu">
+        <div class="container">
+            <h1 class="center">Add New</h1>
+            <div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <ul class="flashes p-0">
+                    {% for category, message in messages %}
+                    <div class="alert alert-danger text-center fw-bolder" role="alert">
+                        <li class="{{ category }}">{{ message }}</li>
+                    </div>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+            </div>
+            <div>
+                <div class="card-add">
+                    <div class="card ml-auto mr-auto">
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-10">
+                                <form class="m-2" action="/addanggota" method="POST">
+                                    <div class="mb-3">
+                                        <label for="nim" class="form-label">NIM</label>
+                                        <input type="text" name="nim" class="form-control" id="nim"
+                                            placeholder="NIM" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="nama_mahasiswa" class="form-label">Nama Mahasiswa</label>
+                                        <input type="text" name="nama_mahasiswa" class="form-control" id="nama_mahasiswa" placeholder="Nama Mahasiswa"
+                                            required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="jurusan" class="form-label">Jurusan</label>
+                                        <input type="text" name="jurusan" class="form-control" id="jurusan" placeholder="Jurusan"
+                                            required>
+                                    </div><br><br>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <a href="/anggota" class="btn btn-danger">Cancel</a>
+                                </form>
+                            </div>
+                            <div class="col-1"></div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            </div>
+        </div>
+    </div>
+    {{footer|safe}}
+</body>
+
+</html>

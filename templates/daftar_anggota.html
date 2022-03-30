@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{head|safe}}
+    <title>Daftar Anggota</title>
+</head>
+
+<body>
+    {{menu|safe}}
+    <div class="menu">
+        <div class="container">
+            <div class="judul">
+                <h1 class="center">Daftar Anggota</h1>
+            </div>
+            <div class="button-add">
+                <a href="/addanggota"><button type="button" class="button-new">Add New</button></a>
+            </div>
+            <div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <ul class="flashes p-0">
+                    {% for category, message in messages %}
+                    <div class="alert alert-success text-center fw-bolder" role="alert">
+                        <li class="{{ category }}">{{ message }}</li>
+                    </div>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            <div class="">
+                <div class="col-lg-15 mx-auto">
+                    <div class="card border-0 shadow">
+                        <div class="card-body p-5">
+                            <!-- Responsive table -->
+                            <div class="table-responsive">
+                                <table class="table m-0">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">NIM</th>
+                                            <th scope="col">Nama Mahasiswa</th>
+                                            <th scope="col">Jurusan</th>
+                                            <th colspan="2" style="width: 20%;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in container %}
+                                        <tr>
+                                            <td>{{row.nim}}</td>
+                                            <td>{{row.nama_mahasiswa}}</td>
+                                            <td>{{row.jurusan}}</td>
+                                            <td>
+                                                <ul class="list-inline m-0">
+                                                    <li class="ms-3"><a class="text-muted"
+                                                            href="editanggota/{{row.nim}}">
+                                                            <img src="../static/img/edit.png" alt="edit" width="30"
+                                                                height="30">
+                                                        </a></li>
+                                                    <li class="ms-3"><a class="text-muted"
+                                                            href="deleteanggota/{{row.nim}}">
+                                                            <img src="../static/img/delete.png" alt="delete" width="30"
+                                                                height="30">
+                                                        </a></li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br><br>
+        </div>
+    </div>
+    {{footer|safe}}
+</body>
+
+</html>

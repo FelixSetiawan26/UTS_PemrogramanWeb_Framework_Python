@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{head|safe}}
+    <title>Daftar Peminjaman</title>
+</head>
+
+<body>
+    {{menu|safe}}
+    <div class="menu">
+        <div class="container">
+            <div class="judul">
+                <h1 class="center">Daftar Peminjaman</h1>
+            </div>
+            <div class="button-back">
+                <a href="/buku">
+                    <img src="../static/img/back.png" alt="Back" width="65px">
+                </a>
+                <a href="/addpeminjaman"><button type="button" class="button-new">Tambah Peminjaman Buku</button></a>
+            </div>
+            <div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <ul class="flashes p-0">
+                    {% for category, message in messages %}
+                    <div class="alert alert-success text-center fw-bolder" role="alert">
+                        <li class="{{ category }}">{{ message }}</li>
+                    </div>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            <div class="">
+                <div class="col-lg-15 mx-auto">
+                    <div class="card border-0 shadow">
+                        <div class="card-body p-5">
+                            <!-- Responsive table -->
+                            <div class="table-responsive">
+                                <table class="table m-0">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Kode Pinjam</th>
+                                            <th scope="col">Kode Buku</th>
+                                            <th scope="col">NIM</th>
+                                            <th scope="col">Tanggal Pinjam</th>
+                                            <th colspan="2" style="width: 20%;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in container %}
+                                        <tr>
+                                            <td>{{row.kode_pinjam}}</td>
+                                            <td>{{row.kode_buku}}</td>
+                                            <td>{{row.nim}}</td>
+                                            <td>{{row.tgl_pinjam}}</td>
+                                            <td>
+                                                <ul class="list-inline m-0">
+                                                    <li class="ms-3"><a class="text-muted"
+                                                            href="deletepeminjaman/{{row.kode_pinjam}}">
+                                                            <img src="../static/img/delete.png" alt="delete" width="30"
+                                                                height="30">
+                                                        </a></li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br><br>
+        </div>
+    </div>
+    {{footer|safe}}
+</body>
+
+</html>

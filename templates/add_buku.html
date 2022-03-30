@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{head|safe}}
+    <title>Add Buku</title>
+</head>
+
+<body>
+    {{menu|safe}}
+    <div class="menu">
+        <div class="container">
+            <h1 class="center">Add New</h1>
+            <div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <ul class="flashes p-0">
+                    {% for category, message in messages %}
+                    <div class="alert alert-danger text-center fw-bolder" role="alert">
+                        <li class="{{ category }}">{{ message }}</li>
+                    </div>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+            </div>
+            <div>
+                <div class="card-add">
+                    <div class="card ml-auto mr-auto">
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-10">
+                                <form class="m-2" action="/addbuku" method="POST">
+                                    <div class="mb-3">
+                                        <label for="kode_buku" class="form-label">Kode Buku</label>
+                                        <input type="text" name="kode_buku" class="form-control" id="kode_buku"
+                                            placeholder="Kode Buku" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="judul" class="form-label">Judul Buku</label>
+                                        <input type="text" name="judul" class="form-control" id="judul" placeholder="Judul Buku"
+                                            required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="stok" class="form-label">Stock Buku</label>
+                                        <input type="number" name="stok" class="form-control" id="stok" placeholder="Stock Buku"
+                                            required>
+                                    </div><br><br>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <a href="/buku" class="btn btn-danger">Cancel</a>
+                                </form>
+                            </div>
+                            <div class="col-1"></div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            </div>
+        </div>
+    </div>
+    {{footer|safe}}
+</body>
+
+</html>

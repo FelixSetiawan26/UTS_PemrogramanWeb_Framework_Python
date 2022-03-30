@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{head|safe}}
+    <title>Edit Anggota</title>
+</head>
+
+<body>
+    {{menu|safe}}
+    <div class="menu">
+        <div class="container">
+            <h1 class="center">Edit Data</h1>
+            <div>
+                <div class="card-add">
+                    <div class="card ml-auto mr-auto">
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-10">
+                                <form class="m-2" action="/editanggota/{{container.nim}}" method="POST">
+                                    <div class="mb-3">
+                                        <label for="nim" class="form-label">NIM</label>
+                                        <input type="text" name="nim" class="form-control" id="nim"
+                                            placeholder="NIM" value="{{container.nim}}" required disabled>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="nama_mahasiswa" class="form-label">Nama Mahasiswa</label>
+                                        <input type="text" name="nama_mahasiswa" class="form-control" id="nama_mahasiswa" value="{{container.nama_mahasiswa}}" placeholder="Nama Mahasiswa"
+                                            required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="jurusan" class="form-label">Jurusan</label>
+                                        <input type="text" name="jurusan" class="form-control" id="jurusan" value="{{container.jurusan}}" placeholder="Jurusan"
+                                            required>
+                                    </div><br><br>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <a href="/anggota" class="btn btn-danger">Cancel</a>
+                                </form>
+                            </div>
+                            <div class="col-1"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {{footer|safe}}
+</body>
+
+</html>

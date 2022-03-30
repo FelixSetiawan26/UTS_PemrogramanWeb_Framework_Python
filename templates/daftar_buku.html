@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{head|safe}}
+    <title>Daftar Buku</title>
+</head>
+
+<body>
+    {{menu|safe}}
+    <div class="menu">
+        <div class="container">
+            <div class="judul">
+                <h1 class="center">Daftar Stock Buku</h1>
+            </div>
+            <div class="button-add">
+                <a href="/addbuku"><button type="button" class="button-new">Add New</button></a>
+            </div>
+            <div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <ul class="flashes p-0">
+                    {% for category, message in messages %}
+                    <div class="alert alert-success text-center fw-bolder" role="alert">
+                        <li class="{{ category }}">{{ message }}</li>
+                    </div>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            <div class="">
+                <div class="col-lg-15 mx-auto">
+                    <div class="card border-0 shadow">
+                        <div class="p-3">
+                            <a href="/peminjaman"><button type="button"
+                                    class="btn btn-outline-primary btn-lg pinjam">Peminjaman</button></a>
+                            <a href="/pengembalian"><button type="button"
+                                    class="btn btn-outline-primary btn-lg pinjam">Pengembalian</button></a>
+                        </div>
+                        <div class="card-body p-5 pt-2 pb-3">
+                            <!-- Responsive table -->
+                            <div class="table-responsive">
+                                <table class="table m-0">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Kode Buku</th>
+                                            <th scope="col">Judul Buku</th>
+                                            <th scope="col">Jumlah Stok</th>
+                                            <th colspan="2" style="width: 20%;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in container %}
+                                        <tr>
+                                            <td>{{row.kode_buku}}</td>
+                                            <td>{{row.judul}}</td>
+                                            <td>{{row.stok}}</td>
+                                            <td>
+                                                <ul class="list-inline m-0">
+                                                    <li class="ms-3">
+                                                        <a href="editbuku/{{row.kode_buku}}">
+                                                            <img class="text-muted" src="../static/img/edit.png" alt="edit" width="30"
+                                                                height="30">
+                                                        </a>
+                                                    </li>
+                                                    <li class="ms-3">
+                                                        <a href="deletebuku/{{row.kode_buku}}">
+                                                            <img class="text-muted" src="../static/img/delete.png" alt="delete" width="30"
+                                                                height="30">
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br><br>
+        </div>
+    </div>
+    {{footer|safe}}
+</body>
+
+</html>
