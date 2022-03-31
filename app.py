@@ -1,3 +1,4 @@
+#Pemanggilan Library yang digunakan pada project ini
 from pickle import TRUE
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
@@ -100,6 +101,7 @@ class Users(db.Model):
         return '[%s,%s,%s]' % \
             (self.nama, self.email, self.password)
 
+#Ketika route "/" maka akan otomatis menuju ke halaman login
 @application.route('/')
 def index():
     return render_template('login.html',
@@ -108,6 +110,7 @@ def index():
     footer = application.config['FOOTER']
     )
 
+#Membuat route home untuk ke halaman index
 @application.route('/home')
 def home():
     return render_template('index.html',
@@ -116,18 +119,23 @@ def home():
     footer = application.config['FOOTER']
     )
 
+#Route Login
 @application.route('/login', methods=['GET', 'POST'])
 def login():
+    #Ketika request method sama dengan POST
     if request.method == 'POST':
         #Menggambil nilai dari form html, dimasukkan kedalam variable
         email = request.form['email']
         password = request.form['password']
         users = Users.query.filter_by(email=email).first()
+        #Mengecek apakah email pada table users sama dengan yang diinput dan sesuai dnegan passwordnya
+        #Jika tidak sesuai, maka akan memberikan flash untuk alert seperti dibawah
         if (users.email != email) or (users.password != password):
             flash('Email or Password Invalid !!')
+        #Jika cocok, maka akan diantar kehalaman home
         else:
             return redirect(url_for('home'))
-
+    #Membuka halaman login ketika route "/login"
     return render_template('login.html',
     head = application.config['HEAD'],
     menu = application.config['MENU'],   
@@ -154,9 +162,9 @@ def register():
             return redirect(url_for('login')) #Akan dikembalikan ke halaman daftarbuku
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
-        flash('Email Sudah Terdaftar !!')
-        return redirect(url_for('login'))
-    
+        flash('Email Sudah Terdaftar !!') #Memberikan flash bahwa email sudah terdaftar
+        return redirect(url_for('login')) #Memngembalikan kehalaman login
+    #Membuka halaman login ketika route "/register" karena login dan register menjadi 1 halaman
     return render_template('login.html',\
     head = application.config['HEAD'],\
     menu = application.config['MENU'],\
@@ -165,7 +173,9 @@ def register():
 
 @application.route('/logout')
 def logout():
+    #Memberikan nilai flash
     flash('Logout Berhasil !!')
+    #Kemudian dikembalikan ke halaman login, karena jika logout, biasanya kembali ke halaman login
     return render_template('login.html',
     head = application.config['HEAD'],
     menu = application.config['MENU'],
@@ -264,6 +274,7 @@ def deleteBuku(kode_buku):
 #Menampilkan Data dari Table Anggota (Read)
 @application.route('/anggota')
 def daftarAnggota():
+    ##Membuka halaman daftar anggota dengan container berisi Model Anggota untuk menampilkan semua data pada anggota
     return render_template('daftar_anggota.html', container=Anggota.query.all(),\
     head = application.config['HEAD'],\
     menu = application.config['MENU'],\
@@ -273,20 +284,25 @@ def daftarAnggota():
 #Menambahkan Data ke Table Anggota (Create)
 @application.route('/addanggota', methods=['GET', 'POST'])
 def addAnggota():
+    #Try except untuk menangkal agar ketika user input primary key(nim) yang sama, maka web tidak akan berhenti/error
+    ##Tetapi memberikan alert pemberitahuan
     try:
         if request.method == 'POST':
+            #Memasukkan data kedalam variable yang diambil dari form html
             nim = request.form['nim']
             nama_mahasiswa = request.form['nama_mahasiswa']
             jurusan = request.form['jurusan']
+            #Memasukkan data yang sudah diterima kedalam Model Anggota
             anggota = Anggota(nim,nama_mahasiswa,jurusan)
+            #Menambahkan/mengirim ke database
             db.session.add(anggota)
             db.session.commit()
-            flash('Data Berhasil Ditambah')
-            return redirect(url_for('daftarAnggota'))
+            flash('Data Berhasil Ditambah') #Memberikan nilai flash untuk alert
+            return redirect(url_for('daftarAnggota')) #Mengembalikan ke halaman daftar anggota setelah semua proses tambah selesai
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
-        flash('NIM sudah ada!!')
-        return redirect(url_for('addAnggota'))
+        flash('NIM sudah ada!!') #Memberikan pesan error pada flash
+        return redirect(url_for('addAnggota')) #Mengembalikan ke halaman add anggota
     
     return render_template('add_anggota.html',\
     head = application.config['HEAD'],\
@@ -297,16 +313,19 @@ def addAnggota():
 #Mengubah data yang ada pada Table Anggota (Update)
 @application.route('/editanggota/<nim>', methods=['GET', 'POST'])
 def editAnggota(nim):
+    #Mengecek data dengan nim yang diterima dari parameter route
     anggota = Anggota.query.filter_by(nim=nim).first()
     if request.method == 'POST':
+        #Menimpa data pada anggota sesuai dengan fieldnya
         anggota.nama_mahasiswa = request.form['nama_mahasiswa']
         anggota.jurusan = request.form['jurusan']
+        #Mengirim data kedalam database
         db.session.add(anggota)
         db.session.commit()
-        flash('Data Anggota : '+ str(anggota.nama_mahasiswa)+ ', Berhasil Diubah')
-        return redirect(url_for('daftarAnggota'))
+        flash('Data Anggota : '+ str(anggota.nama_mahasiswa)+ ', Berhasil Diubah') #Memberikan pemberitahuan pada alert
+        return redirect(url_for('daftarAnggota')) #Mengembalikan ke daftar anggota
     else:
-
+        #Membuka halaman edit anggota
         return render_template('edit_anggota.html', container=anggota,\
         head = application.config['HEAD'],\
         menu = application.config['MENU'],\
@@ -316,11 +335,13 @@ def editAnggota(nim):
 #Menghapus data pada Table Anggota (Delete)
 @application.route('/deleteanggota/<nim>', methods = ['GET', 'POST'])
 def deleteAnggota(nim):
+    #Mencari data dengan nim yang diterima dari parameter untuk dihapus
     anggota= Anggota.query.filter_by(nim=nim).first()
+    #Melakukan penghapusan pada database
     db.session.delete(anggota)
     db.session.commit()
-    flash('Data Berhasil Dihapus')
-    return redirect(url_for('daftarAnggota'))
+    flash('Data Berhasil Dihapus') #Memberikan alert bahwa sudah terhapus
+    return redirect(url_for('daftarAnggota')) #Mengembalikan ke halaman daftar anggota
 
 #################################################################################################
                                     #PeminjamanBuku#
@@ -328,6 +349,7 @@ def deleteAnggota(nim):
 #Menampilkan Data dari Table Pinjam (Read)
 @application.route('/peminjaman')
 def daftarPeminjaman():
+    ##Membuka halaman daftar anggota dengan container berisi Model Anggota untuk menampilkan semua data pada anggota
     return render_template('daftar_peminjaman.html', container=Peminjaman.query.all(),\
     head = application.config['HEAD'],\
     menu = application.config['MENU'],\
@@ -337,31 +359,38 @@ def daftarPeminjaman():
 #Menambahkan Data ke Table Pinjam (Create)
 @application.route('/addpeminjaman', methods=['GET', 'POST'])
 def addPeminjaman():
+    #Try except untuk menangkal agar ketika user input primary key(kode pinjam) yang sama, maka web tidak akan berhenti/error
+    ##Tetapi memberikan alert pemberitahuan
     try:
         if request.method == 'POST':
+            #Menarik data dari form html
             kode_pinjam = request.form['kode_pinjam']
             kode_buku = request.form['kode_buku']
             nim = request.form['nim']
             tgl_pinjam = request.form['tgl_pinjam']
+            #Memasukkan nilai kedalam Model Peminjaman
             peminjaman = Peminjaman(kode_pinjam,kode_buku,nim,tgl_pinjam)
             #Mengurangi Stok dengan kode buku yang dipinjam
             buku = Buku.query.filter_by(kode_buku=kode_buku).first()
+            #Jika stok buku lebih dri 0 (stok masih ada)
             if (int(buku.stok) > 0): 
+                #MAka user bisa melakukan peminjaman dan stok berkurang 1
                 buku.stok = int(buku.stok) - 1
+                #Melakukan ke database
                 db.session.add(peminjaman)
                 db.session.commit()
                 db.session.add(buku)
                 db.session.commit()
-                flash('Buku Berhasil Dipinjam')
-                return redirect(url_for('daftarPeminjaman'))
+                flash('Buku Berhasil Dipinjam') #Memberikan alert
+                return redirect(url_for('daftarPeminjaman')) #Mengembalikan daftar peminjaman
             else:
-                flash('Stok Habis !!')
-                return redirect(url_for('addPeminjaman'))
+                flash('Stok Habis !!') #Memberikan alert bahwa stok habis
+                return redirect(url_for('addPeminjaman')) #Mengembalikan kehalaman addpeminjaman
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
-        flash('Kode Pinjam sudah ada!!')
+        flash('Kode Pinjam sudah ada!!') 
         return redirect(url_for('addPeminjaman'))
-    
+    #Membuka halaman peminjaman beserta container yg berisi Model Buku dan Model Anggota
     return render_template('add_peminjaman.html', container=Buku.query.all(), container1=Anggota.query.all(),\
     head = application.config['HEAD'],\
     menu = application.config['MENU'],\
@@ -371,7 +400,9 @@ def addPeminjaman():
 #Menghapus data pada Table Anggota (Delete)
 @application.route('/deletepeminjaman/<kode_pinjam>', methods = ['GET', 'POST'])
 def deletePeminjaman(kode_pinjam):
+    #Mengecek Kode Pinjam yang diterima dari parameter untuk menghapus data
     peminjaman= Peminjaman.query.filter_by(kode_pinjam=kode_pinjam).first()
+    #Penghapusan data pada database
     db.session.delete(peminjaman)
     db.session.commit()
     ##Menambahkan Stok kembali ketika daftar peminjaman dihapus
@@ -380,8 +411,8 @@ def deletePeminjaman(kode_pinjam):
     buku.stok = int(buku.stok) + 1
     db.session.add(buku)
     db.session.commit()
-    flash('Peminjaman Buku Berhasil Dihapus')
-    return redirect(url_for('daftarPeminjaman'))
+    flash('Peminjaman Buku Berhasil Dihapus') #Alert untuk pemberitahuan
+    return redirect(url_for('daftarPeminjaman')) #Mengembalikan ke halaman daftar pinjam
 
 #################################################################################################
                                     #PengembalianBuku#
@@ -389,6 +420,7 @@ def deletePeminjaman(kode_pinjam):
 #Menampilkan Data dari Table Kembali (Read)
 @application.route('/pengembalian')
 def daftarPengembalian():
+    ##Membuka halaman daftar anggota dengan container berisi Model Anggota untuk menampilkan semua data pada anggota
     return render_template('daftar_pengembalian.html', container=Pengembalian.query.all(),\
     head = application.config['HEAD'],\
     menu = application.config['MENU'],\
@@ -398,13 +430,18 @@ def daftarPengembalian():
 #Menambahkan Data ke Table Kembali (Create)
 @application.route('/addpengembalian', methods=['GET', 'POST'])
 def addPengembalian():
+    #Try except untuk menangkal agar ketika user input primary key(kode kembali) yang sama, maka web tidak akan berhenti/error
+    ##Tetapi memberikan alert pemberitahuan
     try:
         if request.method == 'POST':
+            ##Menarik data dari form html
             kode_kembali = request.form['kode_kembali']
             kode_buku = request.form['kode_buku']
             nim = request.form['nim']
             tgl_kembali = request.form['tgl_kembali']
+            #Memasukkan data kedalam Model
             pengembalian = Pengembalian(kode_kembali,kode_buku,nim,tgl_kembali)
+            #Melakukan Penambahan data kedalam database
             db.session.add(pengembalian)
             db.session.commit()
             #Mengurangi Stok dengan kode buku yang dipinjam
@@ -428,21 +465,25 @@ def addPengembalian():
 #Menghapus data pada Table Anggota (Delete)
 @application.route('/deletepengembalian/<kode_kembali>', methods = ['GET', 'POST'])
 def deletePengembalian(kode_kembali):
+    #Mengecek kode kembali yang diterima dari parameter untuk dihapus
     pengembalian= Pengembalian.query.filter_by(kode_kembali=kode_kembali).first()
     ##Menambahkan Stok kembali ketika daftar peminjaman dihapus
     kode_buku = pengembalian.kode_buku
     buku = Buku.query.filter_by(kode_buku=kode_buku).first()
+    #Jika Stok buku > 0 baru menjalankan perintah dibawahnya
     if (int(buku.stok) > 0): 
+        #Menghapus data pengembalian yang sesuai dengan kode kembalinya
         db.session.delete(pengembalian)
         db.session.commit()
+        #Stok dikurangin 1
         buku.stok = int(buku.stok) - 1
         db.session.add(buku)
         db.session.commit()
-        flash('Pengembalian Buku Berhasil Dihapus')
-        return redirect(url_for('daftarPengembalian'))
+        flash('Pengembalian Buku Berhasil Dihapus') #Alert dalam bentuk flash
+        return redirect(url_for('daftarPengembalian')) #Mengembalikan kehalaman daftar pengembalian
     else:
-        flash('Penghapusan Pengembalian Tidak Bisa Diproses, Stok Buku Habis')
-        return redirect(url_for('daftarPengembalian'))
+        flash('Penghapusan Pengembalian Tidak Bisa Diproses, Stok Buku Habis') #Alert dalam bentuk flash
+        return redirect(url_for('daftarPengembalian')) #Mengembalikan kehalaman daftar pengembalian
 
 #################################################################################################
                                         #AboutUs#
@@ -450,6 +491,7 @@ def deletePengembalian(kode_kembali):
 #Menampilkan Halaman About Us
 @application.route('/about')
 def about():
+    #Mengembalikan ke halaman about us
     return render_template('about_us.html',\
     head = application.config['HEAD'],\
     menu = application.config['MENU'],\
