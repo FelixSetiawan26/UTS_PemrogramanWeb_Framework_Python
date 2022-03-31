@@ -1,6 +1,7 @@
 from pickle import TRUE
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 
 application = Flask(__name__)
@@ -83,11 +84,91 @@ class Pengembalian(db.Model):
         return '[%s,%s,%s,%s]' % \
             (self.kode_kembali, self.kode_buku, self.nim, self.tgl_kembali)
 
+#Membuat Class Model Users
+class Users(db.Model):
+    __tablename__ = 'users'
+    nama = db.Column(db.String(50))
+    email = db.Column(db.String(50), primary_key = True)
+    password = db.Column(db.String(50))
+
+    def __init__(self, nama, email, password):
+        self.nama = nama
+        self.email = email
+        self.password = password
+
+    def __repr__(self):
+        return '[%s,%s,%s]' % \
+            (self.nama, self.email, self.password)
+
 @application.route('/')
 def index():
+    return render_template('login.html',
+    head = application.config['HEAD'],
+    menu = application.config['MENU'],   
+    footer = application.config['FOOTER']
+    )
+
+@application.route('/home')
+def home():
     return render_template('index.html',
     head = application.config['HEAD'],
     menu = application.config['MENU'],   
+    footer = application.config['FOOTER']
+    )
+
+@application.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        #Menggambil nilai dari form html, dimasukkan kedalam variable
+        email = request.form['email']
+        password = request.form['password']
+        users = Users.query.filter_by(email=email).first()
+        if (users.email != email) or (users.password != password):
+            flash('Email or Password Invalid !!')
+        else:
+            return redirect(url_for('home'))
+
+    return render_template('login.html',
+    head = application.config['HEAD'],
+    menu = application.config['MENU'],   
+    footer = application.config['FOOTER']
+    )
+
+#Menambahkan Data ke Table Users (Create)
+@application.route('/register', methods=['GET', 'POST'])
+def register():
+    #Menggunakan try except agar saat user input email(primary key) yang sudah ada
+    #maka website tidak error, tetapi akan ada pesan bahwa email sudah ada
+    try:
+        if request.method == 'POST':
+            #Menggambil nilai dari form html, dimasukkan kedalam variable
+            nama = request.form['nama']
+            email = request.form['email']
+            password = request.form['password']
+        #Memasukkan bbrp variable tadi kedalam Buku dengan parameter kodebuku, judul, dan stok
+            users = Users(nama,email,password)
+            #Mengirim data ke database
+            db.session.add(users)
+            db.session.commit()
+            flash('Registrasi Berhasil !!') #Memberikan alert bahwa data berhasil ditambah
+            return redirect(url_for('login')) #Akan dikembalikan ke halaman daftarbuku
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        flash('Email Sudah Terdaftar !!')
+        return redirect(url_for('login'))
+    
+    return render_template('login.html',\
+    head = application.config['HEAD'],\
+    menu = application.config['MENU'],\
+    footer = application.config['FOOTER']
+    )
+
+@application.route('/logout')
+def logout():
+    flash('Logout Berhasil !!')
+    return render_template('login.html',
+    head = application.config['HEAD'],
+    menu = application.config['MENU'],
     footer = application.config['FOOTER']
     )
 

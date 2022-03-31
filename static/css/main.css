@@ -1,6 +1,14 @@
 .logo{
     background-color: rgb(224, 215, 215);
-    width: 35px;
+    width: 40px;
+    margin-left: 20px;
+    border-radius: 100%;
+}
+
+.logout-btn{
+    background-color: rgb(224, 215, 215);
+    width: 45px;
+    margin-right: 20px;
     border-radius: 100%;
 }
 
@@ -176,4 +184,8 @@ p{
 
 a{
     text-decoration: none;
+}
+
+.collapse{
+    justify-content: space-between;
 }
