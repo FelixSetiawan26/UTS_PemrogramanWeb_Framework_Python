@@ -344,15 +344,19 @@ def addPeminjaman():
             nim = request.form['nim']
             tgl_pinjam = request.form['tgl_pinjam']
             peminjaman = Peminjaman(kode_pinjam,kode_buku,nim,tgl_pinjam)
-            db.session.add(peminjaman)
-            db.session.commit()
             #Mengurangi Stok dengan kode buku yang dipinjam
             buku = Buku.query.filter_by(kode_buku=kode_buku).first()
-            buku.stok = int(buku.stok) - 1
-            db.session.add(buku)
-            db.session.commit()
-            flash('Buku Berhasil Dipinjam')
-            return redirect(url_for('daftarPeminjaman'))
+            if (int(buku.stok) > 0): 
+                buku.stok = int(buku.stok) - 1
+                db.session.add(peminjaman)
+                db.session.commit()
+                db.session.add(buku)
+                db.session.commit()
+                flash('Buku Berhasil Dipinjam')
+                return redirect(url_for('daftarPeminjaman'))
+            else:
+                flash('Stok Habis !!')
+                return redirect(url_for('addPeminjaman'))
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         flash('Kode Pinjam sudah ada!!')
@@ -425,16 +429,20 @@ def addPengembalian():
 @application.route('/deletepengembalian/<kode_kembali>', methods = ['GET', 'POST'])
 def deletePengembalian(kode_kembali):
     pengembalian= Pengembalian.query.filter_by(kode_kembali=kode_kembali).first()
-    db.session.delete(pengembalian)
-    db.session.commit()
     ##Menambahkan Stok kembali ketika daftar peminjaman dihapus
     kode_buku = pengembalian.kode_buku
     buku = Buku.query.filter_by(kode_buku=kode_buku).first()
-    buku.stok = int(buku.stok) - 1
-    db.session.add(buku)
-    db.session.commit()
-    flash('Pengembalian Buku Berhasil Dihapus')
-    return redirect(url_for('daftarPengembalian'))
+    if (int(buku.stok) > 0): 
+        db.session.delete(pengembalian)
+        db.session.commit()
+        buku.stok = int(buku.stok) - 1
+        db.session.add(buku)
+        db.session.commit()
+        flash('Pengembalian Buku Berhasil Dihapus')
+        return redirect(url_for('daftarPengembalian'))
+    else:
+        flash('Penghapusan Pengembalian Tidak Bisa Diproses, Stok Buku Habis')
+        return redirect(url_for('daftarPengembalian'))
 
 #################################################################################################
                                         #AboutUs#
